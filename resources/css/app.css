@@ -1,0 +1,35 @@
+@import "tailwindcss";
+@font-face {
+    font-family: "v-sans";
+    font-weight: 400;
+    src: url("/assets/fonts/Golos-Text_Regular.woff2");
+}
+
+@font-face {
+    font-family: "v-sans";
+    font-weight: 500;
+    src: url("/assets/fonts/Golos-Text_Medium.woff2");
+}
+
+@font-face {
+    font-family: "v-sans";
+    font-weight: 600;
+    src: url("/assets/fonts/Golos-Text_DemiBold.woff2");
+}
+
+@font-face {
+    font-family: "v-sans";
+    font-weight: 700;
+    src: url("/assets/fonts/Golos-Text_Bold.woff2");
+}
+
+@font-face {
+    font-family: "v-sans";
+    font-weight: 800;
+    src: url("../fonts/Golos-Text_Black.woff2");
+}
+
+html {
+    font-family: 'v-sans';
+}
+
