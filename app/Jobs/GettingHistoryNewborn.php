@@ -110,8 +110,22 @@ class GettingHistoryNewborn implements ShouldQueue
                     NewbornSync::first()->delete();
                 }
 
+                $lastNewborn = Newborn::whereDate('BD', '=', $nowDate)
+                    ->where(function($query) {
+                        $query->whereNull('FAMILY')
+                            ->orWhere('FAMILY', '=', '')
+                            ->orWhereNull('Name')
+                            ->orWhere('Name', '=', '');
+                    })
+                    ->orderBy('MedicalHistoryID')
+                    ->first();
+
+                if (!isset($lastNewborn)) {
+                    $lastNewborn = Newborn::latest()->first();
+                }
+
                 NewbornSync::create([
-                    'last_bd' => Newborn::latest()->first()->BD,
+                    'last_bd' => $lastNewborn->BD,
                 ]);
             })
             ->name('newborn');
