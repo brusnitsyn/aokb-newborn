@@ -59,13 +59,31 @@ class FinnalyProcessNewborn implements ShouldBroadcast
         $countGirl = Newborn::where('Sex', 0)
             ->whereYear('BD', '=', $nowYear)->count();
 
+        $this->latestTheeHistoryBoy = $latestTheeHistoryBoy;
+        $this->latestTheeHistoryGirl = $latestTheeHistoryGirl;
+        $this->countInDayBoy = $countInDayBoy;
+        $this->countInDayGirl = $countInDayGirl;
+        $this->countBoy = $countBoy;
+        $this->countGirl = $countGirl;
+    }
+
+    /**
+     * Имя транслируемого события.
+     */
+    public function broadcastAs(): string
+    {
+        return 'aokb.newborn.finally';
+    }
+
+    public function broadcastWith(): array
+    {
         return [
-            $this->latestTheeHistoryBoy = $latestTheeHistoryBoy,
-            $this->latestTheeHistoryGirl = $latestTheeHistoryGirl,
-            $this->countInDayBoy = $countInDayBoy,
-            $this->countInDayGirl = $countInDayGirl,
-            $this->countBoy = $countBoy,
-            $this->countGirl = $countGirl,
+            'latestTheeHistoryBoy' => $this->latestTheeHistoryBoy,
+            'latestTheeHistoryGirl' => $this->latestTheeHistoryGirl,
+            'countInDayBoy' => $this->countInDayBoy,
+            'countInDayGirl' => $this->countInDayGirl,
+            'countBoy' => $this->countBoy,
+            'countGirl' => $this->countGirl,
         ];
     }
 
@@ -77,7 +95,7 @@ class FinnalyProcessNewborn implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new Channel('aokb-newborn'),
+            new Channel('aokb.newborn.finally'),
         ];
     }
 }

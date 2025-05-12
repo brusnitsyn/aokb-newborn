@@ -1,5 +1,5 @@
 <script setup>
-import {format, formatDistanceToNowStrict} from "date-fns";
+import {format, formatDistanceToNowStrict, isDate} from "date-fns";
 import {ru} from "date-fns/locale/ru";
 import {useNow} from "@vueuse/core";
 import {computed, onMounted, ref} from "vue";
@@ -26,6 +26,13 @@ const props = defineProps({
     },
 })
 
+const latestBoys = ref([...props.latestTheeHistoryBoy])
+const latestGirls = ref([...props.latestTheeHistoryGirl])
+const countDayBoy = ref(props.countInDayBoy)
+const countDayGirl = ref(props.countInDayGirl)
+const countAllBoys = ref(props.countBoy)
+const countAllGirls = ref(props.countGirl)
+
 const showTotalCard = ref(false)
 const now = useNow()
 const motions = useMotions()
@@ -47,6 +54,16 @@ onMounted(() => {
             showTotalCard.value = false
         }, 10000) // 10 секунд
     }, 300000) // 5 минут
+
+    window.Echo.channel(`aokb.newborn.finally`)
+        .listen('.aokb.newborn.finally', (data) => {
+            latestBoys.value = data.latestTheeHistoryBoy
+            latestGirls.value = data.latestTheeHistoryGirl
+            countDayBoy.value = data.countInDayBoy
+            countDayGirl.value = data.countInDayGirl
+            countAllBoys.value = data.countBoy
+            countAllGirls.value = data.countGirl
+        })
 })
 </script>
 
@@ -69,11 +86,11 @@ onMounted(() => {
                 <div class="flex flex-col items-center relative">
                     <div class="mb-4 bg-[#ec6608] rounded-full w-[120px] h-[120px] flex items-center justify-center border-2 border-[#384653]">
                         <span class="text-[80px] font-bold text-[#384653] leading-18">
-                          {{ countInDayBoy }}
+                          {{ countDayBoy }}
                         </span>
                     </div>
                     <div class="flex flex-col gap-y-2 w-[428px] h-[172px]">
-                        <div v-for="newborn in latestTheeHistoryBoy" class="rounded-3xl bg-gray-300 border-2 border-gray-500 relative">
+                        <div v-for="newborn in latestBoys" class="rounded-3xl bg-gray-300 border-2 border-gray-500 relative">
                             <div class="flex flex-row items-center min-h-[48px]">
                                 <div class="w-[56px] h-[48px]">
                                     <div
@@ -82,7 +99,7 @@ onMounted(() => {
                                     </div>
                                 </div>
                                 <div class="grid grid-cols-2 ml-[16px] w-full font-bold text-[#384653]">
-                                    <span class="text-left">{{ newborn.Name }} {{ newborn.FAMILY[0] }}</span>
+                                    <span class="text-left">{{ newborn.Name }} {{ newborn.FAMILY ? newborn.FAMILY[0] : '' }}</span>
                                     <span class="text-left">{{ formatTimeAgo(newborn.BD) }}</span>
                                 </div>
                             </div>
@@ -104,7 +121,7 @@ onMounted(() => {
                              class="absolute bg-[#ec6608] top-0 -bottom-1 -inset-x-1 flex flex-col justify-center items-center rounded-3xl shadow">
                             <div class="bg-[#ec6608] rounded-full px-16 h-[120px] flex items-center justify-center">
                                 <span class="text-[80px] font-bold text-white leading-18">
-                                  {{ countBoy }}
+                                  {{ countAllBoys }}
                                 </span>
                             </div>
                             <span class="text-2xl font-bold text-white">
@@ -125,11 +142,11 @@ onMounted(() => {
                 <div class="flex flex-col items-center relative">
                     <div class="mb-4 bg-[#ec6608] rounded-full w-[120px] h-[120px] flex items-center justify-center border-2 border-[#384653]">
                         <span class="text-[80px] font-bold text-[#384653] leading-18 ">
-                          {{ countInDayGirl }}
+                          {{ countDayGirl }}
                         </span>
                     </div>
                     <div class="flex flex-col gap-y-2 w-[428px] h-[172px]">
-                        <div v-for="newborn in latestTheeHistoryGirl" class="rounded-3xl bg-gray-300 border-2 border-gray-500 relative">
+                        <div v-for="newborn in latestGirls" class="rounded-3xl bg-gray-300 border-2 border-gray-500 relative">
                             <div class="flex flex-row items-center min-h-[48px]">
                                 <div class="w-[56px] h-[48px]">
                                     <div
@@ -138,7 +155,7 @@ onMounted(() => {
                                     </div>
                                 </div>
                                 <div class="grid grid-cols-2 ml-[16px] w-full font-bold text-[#384653]">
-                                    <span class="text-left">{{ newborn.Name }} {{ newborn.FAMILY[0] }}</span>
+                                    <span class="text-left">{{ newborn.Name }} {{ newborn.FAMILY ? newborn.FAMILY[0] : '' }}</span>
                                     <span class="text-left">{{ formatTimeAgo(newborn.BD) }}</span>
                                 </div>
                             </div>
@@ -160,7 +177,7 @@ onMounted(() => {
                              class="absolute bg-[#ec6608] top-0 -bottom-1 -inset-x-1 flex flex-col justify-center items-center rounded-3xl shadow">
                             <div class="bg-[#ec6608] rounded-full px-16 h-[120px] flex items-center justify-center">
                                 <span class="text-[80px] font-bold text-white leading-18">
-                                  {{ countGirl }}
+                                  {{ countAllGirls }}
                                 </span>
                             </div>
                             <span class="text-2xl font-bold text-white">
