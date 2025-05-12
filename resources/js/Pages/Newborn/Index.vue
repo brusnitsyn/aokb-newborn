@@ -101,7 +101,7 @@ onMounted(() => {
                              :leave="{
                                  y: 500
                              }"
-                             class="absolute bg-[#ec6608] inset-0 -inset-x-1 flex flex-col justify-center items-center rounded-3xl shadow">
+                             class="absolute bg-[#ec6608] top-0 -bottom-1 -inset-x-1 flex flex-col justify-center items-center rounded-3xl shadow">
                             <div class="bg-[#ec6608] rounded-full px-16 h-[120px] flex items-center justify-center">
                                 <span class="text-[80px] font-bold text-white leading-18">
                                   {{ countBoy }}
@@ -157,7 +157,7 @@ onMounted(() => {
                              :leave="{
                                  y: 500
                              }"
-                             class="absolute bg-[#ec6608] inset-0 -inset-x-1 flex flex-col justify-center items-center rounded-3xl shadow">
+                             class="absolute bg-[#ec6608] top-0 -bottom-1 -inset-x-1 flex flex-col justify-center items-center rounded-3xl shadow">
                             <div class="bg-[#ec6608] rounded-full px-16 h-[120px] flex items-center justify-center">
                                 <span class="text-[80px] font-bold text-white leading-18">
                                   {{ countGirl }}
