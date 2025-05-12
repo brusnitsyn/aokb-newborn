@@ -89,9 +89,9 @@ onMounted(() => {
                         </div>
                     </div>
                     <transition :css="false"
-                                @leave="(el, done) => motions.card.leave(done)">
+                                @leave="(el, done) => motions.cardBoys.leave(done)">
                         <div v-if="showTotalCard"
-                             v-motion="'card'"
+                             v-motion="'cardBoys'"
                              :initial="{
                                 y: 500,
                              }"
@@ -145,9 +145,9 @@ onMounted(() => {
                         </div>
                     </div>
                     <transition :css="false"
-                                @leave="(el, done) => motions.card.leave(done)">
+                                @leave="(el, done) => motions.cardGirl.leave(done)">
                         <div v-if="showTotalCard"
-                             v-motion="'card'"
+                             v-motion="'cardGirl'"
                              :initial="{
                                 y: 500,
                              }"
