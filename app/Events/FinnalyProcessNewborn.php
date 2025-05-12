@@ -11,6 +11,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Carbon;
+use Laravel\Reverb\Loggers\Log;
 
 class FinnalyProcessNewborn implements ShouldBroadcast
 {
@@ -26,39 +27,9 @@ class FinnalyProcessNewborn implements ShouldBroadcast
     /**
      * Create a new event instance.
      */
-    public function __construct()
+    public function __construct(array $latestTheeHistoryBoy, array $latestTheeHistoryGirl, int $countInDayBoy,
+                                int $countInDayGirl, int $countBoy, int $countGirl)
     {
-        $nowYear = Carbon::now()->year;
-        $nowDate = Carbon::now()->toDateString();
-
-        $historyBoy = Newborn::where('Sex', 1)
-            ->where('BD', '>', $nowDate)
-            ->orderBy('BD')
-            ->get()->map(function ($item, $key) {
-                $item->num = $key + 1;
-                return $item;
-            });
-        $historyGirl = Newborn::where('Sex', 0)
-            ->where('BD', '>', $nowDate)
-            ->orderBy('BD')
-            ->get()->map(function ($item, $key) {
-                $item->num = $key + 1;
-                return $item;
-            });
-
-        $latestTheeHistoryBoy = $historyBoy->sortByDesc('num')->values()->take(3);
-        $latestTheeHistoryGirl = $historyGirl->sortByDesc('num')->values()->take(3);
-
-        $countInDayBoy = Newborn::where('Sex', 1)
-            ->where('BD', '>', $nowDate)->count();
-        $countInDayGirl = Newborn::where('Sex', 0)
-            ->where('BD', '>', $nowDate)->count();
-
-        $countBoy = Newborn::where('Sex', 1)
-            ->whereYear('BD', '=', $nowYear)->count();
-        $countGirl = Newborn::where('Sex', 0)
-            ->whereYear('BD', '=', $nowYear)->count();
-
         $this->latestTheeHistoryBoy = $latestTheeHistoryBoy;
         $this->latestTheeHistoryGirl = $latestTheeHistoryGirl;
         $this->countInDayBoy = $countInDayBoy;

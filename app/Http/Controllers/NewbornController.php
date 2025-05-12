@@ -15,14 +15,15 @@ class NewbornController extends Controller
         $nowDate = Carbon::now()->toDateString();
 
         $historyBoy = Newborn::where('Sex', 1)
-            ->where('BD', '>', $nowDate)
+            ->whereDate('BD', '=', $nowDate)
             ->orderBy('BD')
             ->get()->map(function ($item, $key) {
                 $item->num = $key + 1;
                 return $item;
             });
+
         $historyGirl = Newborn::where('Sex', 0)
-            ->where('BD', '>', $nowDate)
+            ->whereDate('BD', '=', $nowDate)
             ->orderBy('BD')
             ->get()->map(function ($item, $key) {
                 $item->num = $key + 1;
@@ -33,9 +34,9 @@ class NewbornController extends Controller
         $latestTheeHistoryGirl = $historyGirl->sortByDesc('num')->values()->take(3);
 
         $countInDayBoy = Newborn::where('Sex', 1)
-            ->where('BD', '>', $nowDate)->count();
+            ->whereDate('BD', '=', $nowDate)->count();
         $countInDayGirl = Newborn::where('Sex', 0)
-            ->where('BD', '>', $nowDate)->count();
+            ->whereDate('BD', '=', $nowDate)->count();
 
         $countBoy = Newborn::where('Sex', 1)
             ->whereYear('BD', '=', $nowYear)->count();

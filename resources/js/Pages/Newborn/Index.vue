@@ -57,6 +57,7 @@ onMounted(() => {
 
     window.Echo.channel(`aokb.newborn.finally`)
         .listen('.aokb.newborn.finally', (data) => {
+            console.log(data)
             latestBoys.value = data.latestTheeHistoryBoy
             latestGirls.value = data.latestTheeHistoryGirl
             countDayBoy.value = data.countInDayBoy

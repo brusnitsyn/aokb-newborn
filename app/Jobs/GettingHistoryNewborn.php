@@ -8,6 +8,7 @@ use App\Models\NewbornSync;
 use Illuminate\Bus\Batch;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
@@ -37,7 +38,7 @@ class GettingHistoryNewborn implements ShouldQueue
                 ->table('stt_MedicalHistory')
                 ->select(['MedicalHistoryID', 'FAMILY', 'Name', 'OT', 'BD', 'Sex'])
                 ->where('rf_MedCardTypeID', 4)
-                ->where('BD', '>', $lastSyncBD->last_bd)
+                ->whereDate('BD', '>', $lastSyncBD->last_bd)
                 ->orderBy('MedicalHistoryID')
                 ->get();
 
@@ -69,7 +70,40 @@ class GettingHistoryNewborn implements ShouldQueue
         $batch = Bus::batch($tasks)
             ->then(function (Batch $batch) {
                 Log::info('Синхронизация прошла успешно');
-                broadcast(new FinnalyProcessNewborn());
+
+                $nowYear = Carbon::now()->year;
+                $nowDate = Carbon::now()->toDateString();
+
+                $historyBoy = Newborn::where('Sex', 1)
+                    ->whereDate('BD', '=', $nowDate)
+                    ->orderBy('BD')
+                    ->get()->map(function ($item, $key) {
+                        $item->num = $key + 1;
+                        return $item;
+                    });
+
+                $historyGirl = Newborn::where('Sex', 0)
+                    ->whereDate('BD', '=', $nowDate)
+                    ->orderBy('BD')
+                    ->get()->map(function ($item, $key) {
+                        $item->num = $key + 1;
+                        return $item;
+                    });
+
+                $latestTheeHistoryBoy = $historyBoy->sortByDesc('num')->values()->take(3);
+                $latestTheeHistoryGirl = $historyGirl->sortByDesc('num')->values()->take(3);
+
+                $countInDayBoy = Newborn::where('Sex', 1)
+                    ->whereDate('BD', '=', $nowDate)->count();
+                $countInDayGirl = Newborn::where('Sex', 0)
+                    ->whereDate('BD', '=', $nowDate)->count();
+
+                $countBoy = Newborn::where('Sex', 1)
+                    ->whereYear('BD', '=', $nowYear)->count();
+                $countGirl = Newborn::where('Sex', 0)
+                    ->whereYear('BD', '=', $nowYear)->count();
+
+                broadcast(new FinnalyProcessNewborn($latestTheeHistoryBoy->toArray(), $latestTheeHistoryGirl->toArray(), $countInDayBoy, $countInDayGirl, $countBoy, $countGirl));
                 $lastSyncBD = NewbornSync::first();
 
                 if (isset($lastSyncBD)) {
