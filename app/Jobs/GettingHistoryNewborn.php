@@ -121,7 +121,7 @@ class GettingHistoryNewborn implements ShouldQueue
                     ->first();
 
                 if (!isset($lastNewborn)) {
-                    $lastNewborn = Newborn::latest()->first();
+                    $lastNewborn = Newborn::orderBy('BD', 'desc')->first();
                 }
 
                 NewbornSync::create([
