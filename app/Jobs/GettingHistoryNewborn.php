@@ -117,7 +117,7 @@ class GettingHistoryNewborn implements ShouldQueue
                             ->orWhereNull('Name')
                             ->orWhere('Name', '=', '');
                     })
-                    ->orderBy('MedicalHistoryID')
+                    ->orderBy('BD', 'desc')
                     ->first();
 
                 if (!isset($lastNewborn)) {
