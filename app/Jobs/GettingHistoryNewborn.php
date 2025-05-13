@@ -38,11 +38,10 @@ class GettingHistoryNewborn implements ShouldQueue
                 ->table('stt_MedicalHistory')
                 ->select(['MedicalHistoryID', 'FAMILY', 'Name', 'OT', 'BD', 'Sex'])
                 ->where('rf_MedCardTypeID', 4)
-                ->whereDate('BD', '>', $lastSyncBD->last_bd)
+                ->whereDate('BD', '>', $lastSyncBD->last_bd->toDateString())
                 ->orderBy('MedicalHistoryID')
                 ->get();
 
-            $this->runTasks($newborns);
         } else {
             $newborns = DB::connection('mis')
                 ->table('stt_MedicalHistory')
@@ -51,8 +50,8 @@ class GettingHistoryNewborn implements ShouldQueue
                 ->orderBy('MedicalHistoryID')
                 ->get();
 
-            $this->runTasks($newborns);
         }
+        $this->runTasks($newborns);
 
     }
 
