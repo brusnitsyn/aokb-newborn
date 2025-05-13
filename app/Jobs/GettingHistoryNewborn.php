@@ -34,11 +34,12 @@ class GettingHistoryNewborn implements ShouldQueue
         $lastSyncBD = NewbornSync::first();
 
         if (isset($lastSyncBD) && $lastSyncBD->last_bd) {
+            $date = Carbon::parse($lastSyncBD->last_bd)->format('Ymd H:i:s');
             $newborns = DB::connection('mis')
                 ->table('stt_MedicalHistory')
                 ->select(['MedicalHistoryID', 'FAMILY', 'Name', 'OT', 'BD', 'Sex'])
                 ->where('rf_MedCardTypeID', 4)
-                ->where('BD', '>', $lastSyncBD->last_bd)
+                ->where('BD', '>', $date)
                 ->orderBy('MedicalHistoryID')
                 ->get();
 
