@@ -38,7 +38,7 @@ class GettingHistoryNewborn implements ShouldQueue
                 ->table('stt_MedicalHistory')
                 ->select(['MedicalHistoryID', 'FAMILY', 'Name', 'OT', 'BD', 'Sex'])
                 ->where('rf_MedCardTypeID', 4)
-                ->whereDate('BD', '>', $lastSyncBD->last_bd->toDateString())
+                ->where('BD', '>', $lastSyncBD->last_bd->toDateString())
                 ->orderBy('MedicalHistoryID')
                 ->get();
 
