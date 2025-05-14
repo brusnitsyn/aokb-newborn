@@ -39,7 +39,7 @@ class GettingHistoryNewborn implements ShouldQueue
                 ->table('stt_MedicalHistory')
                 ->select(['MedicalHistoryID', 'FAMILY', 'Name', 'OT', 'BD', 'Sex'])
                 ->where('rf_MedCardTypeID', 4)
-                ->where('BD', '>', $date)
+                ->where('BD', '>=', $date)
                 ->orderBy('MedicalHistoryID')
                 ->get();
 
@@ -110,7 +110,7 @@ class GettingHistoryNewborn implements ShouldQueue
                     NewbornSync::first()->delete();
                 }
 
-                $lastNewborn = Newborn::whereDate('BD', '=', $nowDate)
+                $lastNewborn = Newborn::where('BD', '=', $nowDate)
                     ->where(function($query) {
                         $query->whereNull('FAMILY')
                             ->orWhere('FAMILY', '=', '')
