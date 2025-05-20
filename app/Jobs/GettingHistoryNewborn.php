@@ -13,6 +13,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class GettingHistoryNewborn implements ShouldQueue
 {
@@ -78,6 +79,9 @@ class GettingHistoryNewborn implements ShouldQueue
                     ->orderBy('BD')
                     ->get()->map(function ($item, $key) {
                         $item->num = $key + 1;
+                        $item->Name = Str::title($item->Name);
+                        $item->FAMILY = Str::title($item->FAMILY);
+                        $item->OT = Str::title($item->OT);
                         return $item;
                     });
 
@@ -86,6 +90,9 @@ class GettingHistoryNewborn implements ShouldQueue
                     ->orderBy('BD')
                     ->get()->map(function ($item, $key) {
                         $item->num = $key + 1;
+                        $item->Name = Str::title($item->Name);
+                        $item->FAMILY = Str::title($item->FAMILY);
+                        $item->OT = Str::title($item->OT);
                         return $item;
                     });
 
