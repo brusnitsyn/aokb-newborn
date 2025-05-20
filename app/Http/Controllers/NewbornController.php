@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Newborn;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 
 class NewbornController extends Controller
@@ -19,6 +20,9 @@ class NewbornController extends Controller
             ->orderBy('BD')
             ->get()->map(function ($item, $key) {
                 $item->num = $key + 1;
+                $item->Name = Str::title($item->Name);
+                $item->FAMILY = Str::title($item->FAMILY);
+                $item->OT = Str::title($item->OT);
                 return $item;
             });
 
@@ -27,6 +31,9 @@ class NewbornController extends Controller
             ->orderBy('BD')
             ->get()->map(function ($item, $key) {
                 $item->num = $key + 1;
+                $item->Name = Str::title($item->Name);
+                $item->FAMILY = Str::title($item->FAMILY);
+                $item->OT = Str::title($item->OT);
                 return $item;
             });
 
