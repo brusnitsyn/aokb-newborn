@@ -36,24 +36,23 @@ class GettingHistoryNewborn implements ShouldQueue
         if (isset($lastSyncBD) && $lastSyncBD->last_bd) {
             $date = Carbon::parse($lastSyncBD->last_bd)->format('Ymd H:i:s');
             $newborns = DB::connection('mis')
-                ->table('stt_MedicalHistory')
-                ->select(['MedicalHistoryID', 'FAMILY', 'Name', 'OT', 'BD', 'Sex'])
-                ->where('rf_MedCardTypeID', 4)
-                ->where('BD', '>=', $date)
-                ->orderBy('MedicalHistoryID')
+                ->table('stt_MedicalHistory as kind')
+                ->select(['kind.MedicalHistoryID', 'mother.FAMILY', 'mother.Name', 'mother.OT', 'kind.BD', 'kind.Sex', 'kind.rf_MotherMHID'])
+                ->join('stt_MedicalHistory as mother', 'kind.rf_MotherMHID', '=', 'mother.MedicalHistoryID')
+                ->where('kind.BD', '>', $date)
                 ->get();
 
         } else {
+            $nowDate = Carbon::now()->format('Ymd');
             $newborns = DB::connection('mis')
-                ->table('stt_MedicalHistory')
-                ->select(['MedicalHistoryID', 'FAMILY', 'Name', 'OT', 'BD', 'Sex'])
-                ->where('rf_MedCardTypeID', 4)
-                ->orderBy('MedicalHistoryID')
+                ->table('stt_MedicalHistory as kind')
+                ->select(['kind.MedicalHistoryID', 'mother.FAMILY', 'mother.Name', 'mother.OT', 'kind.BD', 'kind.Sex', 'kind.rf_MotherMHID'])
+                ->join('stt_MedicalHistory as mother', 'kind.rf_MotherMHID', '=', 'mother.MedicalHistoryID')
+                ->where('kind.BD', '>', $nowDate)
                 ->get();
-
         }
-        $this->runTasks($newborns);
 
+        $this->runTasks($newborns);
     }
 
     private function runTasks(Collection $newborns): void
@@ -72,7 +71,7 @@ class GettingHistoryNewborn implements ShouldQueue
                 Log::info('Синхронизация прошла успешно');
 
                 $nowYear = Carbon::now()->year;
-                $nowDate = Carbon::now()->toDateString();
+                $nowDate = Carbon::now()->format('Ymd');
 
                 $historyBoy = Newborn::where('Sex', 1)
                     ->whereDate('BD', '=', $nowDate)
@@ -110,18 +109,15 @@ class GettingHistoryNewborn implements ShouldQueue
                     NewbornSync::first()->delete();
                 }
 
-                $lastNewborn = Newborn::where('BD', '=', $nowDate)
+                $lastNewborn = Newborn::where('BD', '>=', $nowDate)
                     ->where(function($query) {
-                        $query->whereNull('FAMILY')
-                            ->orWhere('FAMILY', '=', '')
-                            ->orWhereNull('Name')
-                            ->orWhere('Name', '=', '');
+                        $query->whereNull('rf_MotherMHID')
+                            ->orWhere('rf_MotherMHID', '=', 0);
                     })
-                    ->orderBy('BD', 'desc')
                     ->first();
 
                 if (!isset($lastNewborn)) {
-                    $lastNewborn = Newborn::orderBy('BD', 'desc')->first();
+                    $lastNewborn = Newborn::latest('BD')->first();
                 }
 
                 NewbornSync::create([

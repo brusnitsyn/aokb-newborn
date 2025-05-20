@@ -13,5 +13,6 @@ class Newborn extends Model
         'OT',
         'BD',
         'Sex',
+        'rf_MotherMHID'
     ];
 }

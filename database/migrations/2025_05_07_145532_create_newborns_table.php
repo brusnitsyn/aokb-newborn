@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('OT')->default("");
             $table->dateTime('BD')->default("01/01/1900");
             $table->boolean('Sex')->default(0);
+            $table->integer('rf_MotherMHID')->default(0);
             $table->timestamps();
         });
     }

@@ -37,6 +37,7 @@ class CreateHistoryNewborn implements ShouldQueue
                 'OT' => $this->newborn->OT,
                 'BD' => $this->newborn->BD,
                 'Sex' => $this->newborn->Sex,
+                'rf_MotherMHID' => $this->newborn->rf_MotherMHID,
             ]
         );
     }
