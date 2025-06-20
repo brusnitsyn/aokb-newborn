@@ -77,16 +77,23 @@ onMounted(() => {
                 <div class="rounded-full px-6 p-3 bg-gray-200 border-2 border-gray-500 font-bold text-[#384653] text-2xl uppercase">
                     Здесь рождается счастье
                 </div>
+            </div>
+        </div>
+        <div class="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2">
+            <div class="flex flex-col gap-y-2">
                 <div class="rounded-full px-6 p-3 bg-gray-200 border-2 border-gray-500 font-bold text-[#384653] text-2xl uppercase w-fit mx-auto">
-                    За сегодня
+                    сегодня
+                </div>
+                <div class="rounded-full px-6 p-3 bg-gray-200 border-2 border-gray-500 font-bold text-[#384653] text-2xl">
+                    {{ formattedNow }}
                 </div>
             </div>
         </div>
-        <div class="absolute bottom-8 left-1/2 -translate-x-1/2">
-            <div class="rounded-full px-6 p-3 bg-gray-200 border-2 border-gray-500 font-bold text-[#384653] text-2xl">
-                {{ formattedNow }}
-            </div>
-        </div>
+<!--        <div class="absolute bottom-8 left-1/2 -translate-x-1/2">-->
+<!--            <div class="rounded-full px-6 p-3 bg-gray-200 border-2 border-gray-500 font-bold text-[#384653] text-2xl">-->
+<!--                {{ formattedNow }}-->
+<!--            </div>-->
+<!--        </div>-->
         <div class="h-screen flex flex-col items-center align-center justify-center border-r-2 border-gray-400"
              style="background-image: url(/assets/img/boy-background.svg);">
             <div class="flex flex-col items-center justify-center text-center w-full">
