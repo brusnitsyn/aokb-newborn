@@ -19,22 +19,26 @@ class NewbornController extends Controller
             ->whereDate('BD', '=', $nowDate)
             ->orderBy('BD')
             ->get()->map(function ($item, $key) {
-                $item->num = $key + 1;
-                $item->Name = Str::title($item->Name);
-                $item->FAMILY = Str::title($item->FAMILY);
-                $item->OT = Str::title($item->OT);
-                return $item;
+                return [
+                    'num' => $item->num = $key + 1,
+                    'Name' => $item->Name = Str::title($item->Name),
+                    'FAMILY' => $item->FAMILY = Str::title($item->FAMILY),
+                    'OT' => $item->OT = Str::title($item->OT),
+                    'date' => Carbon::parse($item->BD)->diffForHumans(),
+                ];
             });
 
         $historyGirl = Newborn::where('Sex', 0)
             ->whereDate('BD', '=', $nowDate)
             ->orderBy('BD')
             ->get()->map(function ($item, $key) {
-                $item->num = $key + 1;
-                $item->Name = Str::title($item->Name);
-                $item->FAMILY = Str::title($item->FAMILY);
-                $item->OT = Str::title($item->OT);
-                return $item;
+                return [
+                    'num' => $item->num = $key + 1,
+                    'Name' => $item->Name = Str::title($item->Name),
+                    'FAMILY' => $item->FAMILY = Str::title($item->FAMILY),
+                    'OT' => $item->OT = Str::title($item->OT),
+                    'date' => Carbon::parse($item->BD)->diffForHumans(),
+                ];
             });
 
         $latestTheeHistoryBoy = $historyBoy->sortByDesc('num')->values()->take(3);

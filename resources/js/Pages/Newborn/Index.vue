@@ -1,7 +1,7 @@
 <script setup>
 import {format, formatDistanceToNowStrict, isDate} from "date-fns";
 import {ru} from "date-fns/locale/ru";
-import {useNow} from "@vueuse/core";
+import {useEventSource, useNow} from "@vueuse/core";
 import {computed, onMounted, ref} from "vue";
 import {useMotions} from "@vueuse/motion";
 
@@ -32,11 +32,19 @@ const countDayBoy = ref(props.countInDayBoy)
 const countDayGirl = ref(props.countInDayGirl)
 const countAllBoys = ref(props.countBoy)
 const countAllGirls = ref(props.countGirl)
+const eventSource = ref(null)
+const getNowDate = computed(() => {
+    if (eventSource.value !== null && eventSource.value.data !== null) {
+        const data = JSON.parse(eventSource.value.data)
+        return format(new Date(data.time), 'dd MMMM yyyy HH:mm:ss', { locale: ru })
+    }
+    return format(useNow().value, 'dd MMMM yyyy HH:mm:ss', { locale: ru })
+})
 
 const showTotalCard = ref(false)
 const now = useNow()
 const motions = useMotions()
-const formattedNow = computed(() => format(now.value, 'dd MMMM yyyy HH:mm:ss', { locale: ru }))
+const formattedNow = computed(() => format(getNowDate.value, 'dd MMMM yyyy HH:mm:ss', { locale: ru }))
 
 const formatTimeAgo = (date) => {
     return formatDistanceToNowStrict(date, {
@@ -47,6 +55,7 @@ const formatTimeAgo = (date) => {
 }
 
 onMounted(() => {
+    eventSource.value = useEventSource(`http://${import.meta.env.VITE_SSE_TIME_SERVICE_URL}/sse/time`)
     // Запускаем интервал для показа карточки
     setInterval(() => {
         showTotalCard.value = true
@@ -85,7 +94,7 @@ onMounted(() => {
                     сегодня
                 </div>
                 <div class="rounded-full px-6 p-3 bg-gray-200 border-2 border-gray-500 font-bold text-[#384653] text-2xl">
-                    {{ formattedNow }}
+                    {{ getNowDate }}
                 </div>
             </div>
         </div>
@@ -118,7 +127,7 @@ onMounted(() => {
                                 </div>
                                 <div class="grid grid-cols-2 ml-[16px] w-full font-bold text-[#384653]">
                                     <span class="text-left">{{ newborn.Name }} {{ newborn.FAMILY ? newborn.FAMILY[0] : '' }}</span>
-                                    <span class="text-left">{{ formatTimeAgo(newborn.BD) }}</span>
+                                    <span class="text-left">{{ newborn.date }}</span>
                                 </div>
                             </div>
                         </div>
@@ -174,7 +183,7 @@ onMounted(() => {
                                 </div>
                                 <div class="grid grid-cols-2 ml-[16px] w-full font-bold text-[#384653]">
                                     <span class="text-left">{{ newborn.Name }} {{ newborn.FAMILY ? newborn.FAMILY[0] : '' }}</span>
-                                    <span class="text-left">{{ formatTimeAgo(newborn.BD) }}</span>
+                                    <span class="text-left">{{ newborn.date }}</span>
                                 </div>
                             </div>
                         </div>
