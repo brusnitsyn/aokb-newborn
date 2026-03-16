@@ -32,28 +32,33 @@ class GettingHistoryNewborn implements ShouldQueue
      */
     public function handle(): void
     {
-        $lastSyncBD = NewbornSync::first();
+        try {
+            $lastSyncBD = NewbornSync::first();
 
-        if (isset($lastSyncBD) && $lastSyncBD->last_bd) {
-            $date = Carbon::parse($lastSyncBD->last_bd)->format('Ymd H:i:s');
-            $newborns = DB::connection('mis')
-                ->table('stt_MedicalHistory as kind')
-                ->select(['kind.MedicalHistoryID', 'mother.FAMILY', 'mother.Name', 'mother.OT', 'kind.BD', 'kind.Sex', 'kind.rf_MotherMHID'])
-                ->join('stt_MedicalHistory as mother', 'kind.rf_MotherMHID', '=', 'mother.MedicalHistoryID')
-                ->where('kind.BD', '>', $date)
-                ->get();
+            if (isset($lastSyncBD) && $lastSyncBD->last_bd) {
+                $date = Carbon::parse($lastSyncBD->last_bd)->format('Ymd H:i:s');
+                $newborns = DB::connection('mis')
+                    ->table('stt_MedicalHistory as kind')
+                    ->select(['kind.MedicalHistoryID', 'mother.FAMILY', 'mother.Name', 'mother.OT', 'kind.BD', 'kind.Sex', 'kind.rf_MotherMHID'])
+                    ->join('stt_MedicalHistory as mother', 'kind.rf_MotherMHID', '=', 'mother.MedicalHistoryID')
+                    ->where('kind.BD', '>', $date)
+                    ->orderBy('kind.BD')
+                    ->get();
 
-        } else {
-            $nowDate = Carbon::now()->format('Ymd');
-            $newborns = DB::connection('mis')
-                ->table('stt_MedicalHistory as kind')
-                ->select(['kind.MedicalHistoryID', 'mother.FAMILY', 'mother.Name', 'mother.OT', 'kind.BD', 'kind.Sex', 'kind.rf_MotherMHID'])
-                ->join('stt_MedicalHistory as mother', 'kind.rf_MotherMHID', '=', 'mother.MedicalHistoryID')
-                ->where('kind.BD', '>', $nowDate)
-                ->get();
+            } else {
+                $nowDate = Carbon::now()->format('Ymd');
+                $newborns = DB::connection('mis')
+                    ->table('stt_MedicalHistory as kind')
+                    ->select(['kind.MedicalHistoryID', 'mother.FAMILY', 'mother.Name', 'mother.OT', 'kind.BD', 'kind.Sex', 'kind.rf_MotherMHID'])
+                    ->join('stt_MedicalHistory as mother', 'kind.rf_MotherMHID', '=', 'mother.MedicalHistoryID')
+                    ->where('kind.BD', '>', $nowDate)
+                    ->get();
+            }
+
+            $this->runTasks($newborns);
+        } finally {
+            DB::connection('mis')->disconnect();
         }
-
-        $this->runTasks($newborns);
     }
 
     private function runTasks(Collection $newborns): void
