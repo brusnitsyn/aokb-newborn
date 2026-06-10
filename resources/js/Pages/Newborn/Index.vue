@@ -88,13 +88,17 @@ onMounted(() => {
             <div class="flex flex-col gap-y-2">
                 <div class="rounded-full px-6 p-3 bg-gray-200 border-2 font-bold text-2xl uppercase"
                      :class="[colorData?.colorClasses?.textCenter, colorData?.colorClasses?.border]">
-                    Здесь рождается счастье
+                    Новая жизнь начинается здесь
                 </div>
             </div>
         </div>
 
+        <!-- Логотип основной -->
+        <img class="h-[600px] absolute top-2/3 -translate-1/2 left-1/2"
+             src="/assets/img/logo.svg" />
+
         <!-- Центральная дата -->
-        <div class="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2">
+        <div class="absolute top-1/3 -translate-y-1/2 left-1/2 -translate-x-1/2">
             <div class="flex flex-col gap-y-2">
                 <div class="rounded-full px-6 p-3 bg-gray-200 border-2 font-bold text-2xl uppercase w-fit mx-auto"
                      :class="[colorData?.colorClasses?.textCenter, colorData?.colorClasses?.border]">
